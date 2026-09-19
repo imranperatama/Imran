@@ -14,12 +14,12 @@ jobs:
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
-    # Langkah untuk mengekstrak file zip proyek kamu otomatis
+    # Perbaikan: Tambah -o agar langsung menimpa file tanpa bertanya
     - name: Unzip Project Files
       run: |
         sudo apt-get install -y unzip
-        unzip diary-layar-android.zip -d .
-        ls -la # Cek isi file setelah diekstrak
+        unzip -o diary-layar-android.zip -d .
+        ls -la
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -42,3 +42,4 @@ jobs:
       with:
         name: DiaryLayar-Debug-APK
         path: app/build/outputs/apk/debug/app-debug.apk
+        
