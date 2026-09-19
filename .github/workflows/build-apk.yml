@@ -14,7 +14,6 @@ jobs:
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
-    # Perbaikan: Tambah -o agar langsung menimpa file tanpa bertanya
     - name: Unzip Project Files
       run: |
         sudo apt-get install -y unzip
@@ -27,10 +26,11 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # Perbaikan: Mengubah versi gradle menjadi 8.7 agar cocok dengan proyekmu
     - name: Validate & Fix Gradle Wrapper
       run: |
         if [ ! -f "gradlew" ]; then
-          gradle wrapper --gradle-version 8.2
+          gradle wrapper --gradle-version 8.7
         fi
         chmod +x gradlew
 
@@ -42,4 +42,3 @@ jobs:
       with:
         name: DiaryLayar-Debug-APK
         path: app/build/outputs/apk/debug/app-debug.apk
-        
