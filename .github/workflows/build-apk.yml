@@ -18,12 +18,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip
-        # PERINGATAN: Pastikan file .zip ini memang sudah ada di repositori GitHub Anda!
         unzip -o GameForge_AI_Imran_MAX_v0_3.zip -d .
         ls -la
 
     - name: Set up JDK 17
-      uses: actions/actions-setup-java@v4
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
@@ -33,7 +32,6 @@ jobs:
 
     - name: Validate & Fix Gradle Wrapper
       run: |
-        # Jika gradlew tidak ada, kita generate ulang menggunakan perintah gradle dari setup-gradle
         if [ ! -f "gradlew" ]; then
           gradle wrapper --gradle-version 8.7
         fi
@@ -46,5 +44,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: DiaryLayar-Debug-APK
-        # Pastikan path ini sesuai dengan letak file build Anda
         path: "**/build/outputs/apk/debug/app-debug.apk"
+        
