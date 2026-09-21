@@ -17,7 +17,7 @@ jobs:
     - name: Unzip Project Files
       run: |
         sudo apt-get install -y unzip
-        unzip -o diary-layar-android.zip -d .
+        unzip -o GameForge_AI_Imran_MAX_v0_3.zip -d .
         ls -la
 
     - name: Set up JDK 17
