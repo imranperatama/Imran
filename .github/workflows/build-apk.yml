@@ -14,15 +14,17 @@ jobs:
     - name: Checkout Source Code
       uses: actions/checkout@v4
 
-    - name: Unzip Project Files
+    - name: Unzip dan Intip Isi File
       run: |
         sudo apt-get update
         sudo apt-get install -y unzip
-        unzip -o GameForge_AI_Imran_MAX_v0_3.zip -d .
-        echo "=== STRUKTUR FOLDER SETELAH UNZIP ==="
-        ls -la
-        echo "=== MENCARI LOKASI BUILD.GRADLE ==="
-        find . -name "build.gradle"
+        unzip -o GameForge_AI_Imran_MAX_v0_3.zip -d proyek_kamu
+        
+        echo "=========================================="
+        echo "BERIKUT ADALAH ISI UTAMA FILE ZIP KAMU:"
+        echo "=========================================="
+        ls -la proyek_kamu
+        echo "=========================================="
 
     - name: Set up JDK 17
       uses: actions/setup-java@v4
@@ -30,25 +32,15 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-
-    - name: Build APK Debug (Auto-Detect Folder)
+    - name: Coba Build Android Bawaan
       run: |
-        # Mencari di mana letak file settings.gradle atau build.gradle berada
-        GRADLE_DIR=$(dirname $(find . -name "settings.gradle" | head -n 1))
-        
-        if [ -z "$GRADLE_DIR" ] || [ "$GRADLE_DIR" = "." ]; then
-          echo "Menjalankan build di folder utama..."
-          if [ ! -f "gradlew" ]; then gradle wrapper --gradle-version 8.7; fi
+        cd proyek_kamu
+        if [ -f "gradlew" ]; then
           chmod +x gradlew
           ./gradlew assembleDebug
         else
-          echo "Proyek Android ditemukan di folder: $GRADLE_DIR"
-          cd "$GRADLE_DIR"
-          if [ ! -f "gradlew" ]; then gradle wrapper --gradle-version 8.7; fi
-          chmod +x gradlew
-          ./gradlew assembleDebug
+          echo "ERROR: File gradlew tidak ditemukan. Ini bukan proyek Android Studio!"
+          exit 1
         fi
 
     - name: Upload APK Result
