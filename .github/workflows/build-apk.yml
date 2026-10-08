@@ -1,1 +1,70 @@
+name: Android Build APK
 
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Unzip dan Intip Isi File
+        run: |
+          if [ ! -f diary-layar-android.zip ]; then
+            echo "ERROR: diary-layar-android.zip tidak ada di root repo. Upload dulu zip-nya ke sini."
+            ls -la
+            exit 1
+          fi
+
+          unzip -o -q diary-layar-android.zip -d proyek_kamu
+
+          echo "=========================================="
+          echo "BERIKUT ADALAH ISI UTAMA FILE ZIP KAMU:"
+          echo "=========================================="
+          ls -la proyek_kamu
+          echo "=========================================="
+
+          SETTINGS=$(find proyek_kamu -maxdepth 3 -name 'settings.gradle*' | head -n 1)
+          if [ -z "$SETTINGS" ]; then
+            echo "ERROR: settings.gradle(.kts) tidak ketemu. Ini bukan proyek Android."
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$SETTINGS")
+          echo "Folder proyek: $PROJECT_DIR"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build APK Debug
+        run: |
+          cd "$PROJECT_DIR"
+          if [ -f gradlew ]; then
+            chmod +x gradlew
+            ./gradlew assembleDebug --stacktrace
+          else
+            gradle assembleDebug --stacktrace
+          fi
+
+      - name: Upload APK Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: DiaryLayar-Debug-APK
+          path: "proyek_kamu/**/build/outputs/apk/debug/app-debug.apk"
+          if-no-files-found: error
+          
